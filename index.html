@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Glam 13-in-1 Word-of-the-Day Generator</title>
+<title>Glam 13-in-1 Word-of-the-Day Generator - Clean Flow</title>
 <style>
 :root{--pink:#ff4fd8;--gold:#ffd86b;--purple:#7a3cff;--blue:#46d9ff;--bg:#05050a;--panel:rgba(14,12,24,.92);--line:rgba(255,255,255,.14)}
 *{box-sizing:border-box}
@@ -20,8 +20,9 @@ h1{margin:0;font-size:clamp(28px,6vw,58px);text-shadow:0 0 20px var(--pink),0 0 
 .tabs{width:min(1260px,94vw);margin:18px auto;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .tab{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:999px;padding:9px 12px;cursor:pointer;font-weight:900;font-size:12px}
 .tab.active{background:linear-gradient(135deg,var(--pink),var(--purple));border-color:transparent;box-shadow:0 0 16px rgba(255,79,216,.3)}
-.generator{display:none;width:min(1260px,94vw);margin:0 auto 70px;grid-template-columns:1.02fr .98fr;gap:18px}
-.generator.active{display:grid}
+.generator{display:none;width:min(1260px,94vw);margin:0 auto 70px}
+.generator.active{display:block}
+.card{margin-bottom:16px}
 @media(max-width:960px){.generator.active{display:block}.card{margin-bottom:16px}}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:16px;box-shadow:0 0 24px rgba(255,79,216,.14),inset 0 0 18px rgba(255,255,255,.03);backdrop-filter:blur(10px)}
 .styleDNA{padding:13px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);line-height:1.45;color:#f8dcff;margin-bottom:12px}
@@ -57,6 +58,9 @@ button.secondary{background:linear-gradient(135deg,#12121d,#2e2442);color:#fff;b
 .fixedScroll{position:fixed;right:16px;z-index:30;display:flex;flex-direction:column;gap:10px;top:50%;transform:translateY(-50%)}
 .fixedScroll button{width:48px;height:48px;padding:0;border-radius:50%;color:#fff;background:#111;border:1px solid var(--pink)}
 footer{text-align:center;padding:30px;color:#d3bedf}
+.mainPromptPanel{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.14)}
+.mainPromptPanel h2{margin:0 0 8px}
+.controlsCard,.outputsCard{align-self:start}
 
 .heroImageWrap{width:min(1120px,94vw);margin:16px auto 8px;border:1px solid rgba(255,216,107,.45);border-radius:24px;overflow:hidden;background:rgba(0,0,0,.35);box-shadow:0 0 24px rgba(255,216,107,.18),0 0 30px rgba(255,79,216,.12)}
 .heroImageWrap img{display:block;width:100%;height:auto}
@@ -736,11 +740,6 @@ function buildGenerator(style,i){
     ${c["Cactus Style"] ? buildSelect(style,"Cactus Style",c["Cactus Style"]) : ""}
     ${c["Sky / Lighting"] ? buildSelect(style,"Sky / Lighting",c["Sky / Lighting"]) : ""}
     ${c["Poster Finish"] ? buildSelect(style,"Poster Finish",c["Poster Finish"]) : ""}
-    ${c["Video Script Style"] ? buildSelect(style,"Video Script Style",c["Video Script Style"]) : ""}
-    ${c["Suno Music Prompt Style"] ? buildSelect(style,"Suno Music Prompt Style",c["Suno Music Prompt Style"]) : ""}
-    ${c["Caption Style"] ? buildSelect(style,"Caption Style",c["Caption Style"]) : ""}
-    ${c["Sales Copy Angle"] ? buildSelect(style,"Sales Copy Angle",c["Sales Copy Angle"]) : ""}
-    ${c["Product Listing Language"] ? buildSelect(style,"Product Listing Language",c["Product Listing Language"]) : ""}
   </div></details>` : ""}
 
   ${style.id==="bridge" ? `<details open><summary>City Bridge Confidence Controls</summary><div class="controls grid2">
@@ -818,18 +817,24 @@ function buildGenerator(style,i){
     <label class="field"><input id="${idOf(style.id,'fullBody')}" type="checkbox" style="width:auto" checked> Enforce full-body framing when character is used</label>
   </div></details>`;
   return `<section id="${style.id}" class="generator ${i===0?'active':''}">
-    <div class="card"><h2>${escapeHtml(style.name)} Mini-Generator</h2>${leftControls}</div>
-    <div class="card">
-      <h2>${escapeHtml(style.name)} Outputs</h2>
-      <div class="buttonbar"><button type="button" onclick="copyBox('${style.id}_mainOutput')">Copy Full Prompt</button><button type="button" onclick="copyChatGPTPrompt('${style.id}')" class="secondary">Copy ChatGPT Image Box Safe Prompt</button></div>
-      <div id="${style.id}_mainOutput" class="output"></div>
+    <div class="card controlsCard">
+      <h2>${escapeHtml(style.name)} Mini-Generator</h2>${leftControls}
+      <div class="mainPromptPanel">
+        <h2>Main Prompt Output</h2>
+        <div class="buttonbar"><button type="button" onclick="copyBox('${style.id}_mainOutput')">Copy Full Prompt</button><button type="button" onclick="copyChatGPTPrompt('${style.id}')" class="secondary">Copy ChatGPT Image Box Safe Prompt</button></div>
+        <div id="${style.id}_mainOutput" class="output"></div>
+      </div>
+      <div class="extrasFlow">
       <details open><summary>Prompt Quality Checker</summary><div class="controls"><div id="${style.id}_quality" class="output smallout"></div></div></details>
       <details><summary>3 More Variations</summary><div class="controls"><button type="button" onclick="copyBox('${style.id}_variations')">Copy Variations</button><div id="${style.id}_variations" class="output"></div></div></details>
       <details open><summary>8-Second Animated Video Script</summary><div class="controls"><div class="buttonbar"><button type="button" onclick="generateVideoScript('${style.id}')">Generate Video Script</button><button type="button" onclick="copyBox('${style.id}_video')">Copy Video</button></div><div id="${style.id}_video" class="output smallout"></div></div></details>
       <details open><summary>Suno Music Controls</summary><div class="controls">
         <label>Genre Selection</label><div id="${style.id}_genres" class="chips"></div>
+        <div class="field"><label>Custom Genre Selection</label><input id="${style.id}_customGenre" placeholder="Type your own genre or genre blend..."></div>
         <label>Style Influence Selection</label><div id="${style.id}_vibes" class="chips"></div>
+        <div class="field"><label>Custom Style Influence Selection</label><input id="${style.id}_customStyleInfluence" placeholder="Type your own style influence or mood..."></div>
         <label>Vocal Type</label><div id="${style.id}_vocals" class="chips"></div>
+        <div class="field"><label>Custom Vocal Type</label><input id="${style.id}_customVocalType" placeholder="Example: soft female vocal, gritty male rap, choir, duet..."></div>
         <label>Weirdness</label><div class="rangeRow"><input type="range" id="${style.id}_weird" min="0" max="100" value="35" oninput="syncRanges('${style.id}')"><span id="${style.id}_weirdVal">35%</span></div>
         <label>Style Influence</label><div class="rangeRow"><input type="range" id="${style.id}_styleInf" min="0" max="100" value="70" oninput="syncRanges('${style.id}')"><span id="${style.id}_styleInfVal">70%</span></div>
         <label>Audio Influence</label><div class="rangeRow"><input type="range" id="${style.id}_audioInf" min="0" max="100" value="55" oninput="syncRanges('${style.id}')"><span id="${style.id}_audioInfVal">55%</span></div>
@@ -858,6 +863,7 @@ function buildGenerator(style,i){
         <h4>Knowledge</h4><button type="button" onclick="copyBox('${style.id}_knowledge')">Copy</button><div id="${style.id}_knowledge" class="output"></div>
       </div></details>
       <details><summary>Prompt History</summary><div class="controls" id="${style.id}_history"></div></details>
+      </div>
     </div>
   </section>`;
 }
@@ -892,7 +898,7 @@ function syncRanges(styleId){
 }
 function data(styleId){
   if(styleId!=="sunrise") syncAcronymDropdownToHeadline(styleId);
-  const keys=["Aspect Ratio","Text Type","Faith Tone","Poster Style Mode","Day of the Week Theme","Day Theme Display Rule","Text Sync Mode","Top Header Text","Headline Word","Headline Style","Acronym Letters","Jealousy Poster Theme","Jealousy Message Style","Character Type / Main Subject","Main Warning Message","Blessing / Peace Message","Luxury Car / SUV Type","Car Pose","Mansion / Driveway Background","Designer-Inspired Colorblock Outfit","Boot + Handbag Match","Coffee Cup / Tumbler Text","Flower + Rose Colors","Dove / Butterfly / Heart Details","Pink Bow / Car Decor","Quote Card Style","Custom Signature / Footer","Vehicle Type","Vehicle Pose / Placement","Vehicle Finish / Color","Vehicle Decor","Scene Background","Character Action","Extra Props","Main Headline Color","Headline Glow Color","Script Word Color","Body Text Color","Highlight Word Color 1","Highlight Word Color 2","Quote Card Background","Quote Card Border","Footer / Signature Color","Acronym Message Builder","Typography Layout","Background","Bridge Style","Art Finish","Color Palette","Primary Color","Secondary Color","Accent Color","Ethnicity","Skin Tone","Body Type","Hair","Hair Finish","Facial Expression","Makeup","Face / Beauty Details","Hat Style","Outfit","Outfit / Jacket Style","Top Style","Bottom Style","Jeans Style","Shirt Graphic","Shoes / Boots","Handbag / Accessories","Accessories","Weather / Season","City Mood / Weather","Outfit Color + Pattern","Dog / Beautiful Leash","Character Pose","Pose + Crop Lock","Decor","Background Details","Butterfly Details","Accent Effects","Runway Details","Typography Color Finish","Remember Style","Signature Style","Quote Text / Wording","Flower Type","Flower Style","Flower Placement","Butterfly Style","Butterfly Amount","Sparkle / Glow Effects","Typography Style","Character Framing","Jewelry / Accessories","Background Style","Decor Details","Poster Finish","Animal Main","Animal Sidekick","Animal Accessories","Animal Placement","Animal Expression","Animal Quantity","Animal Action / Pose","Animal Safety / Text Blocking Rule","Desert Props","Campfire Details","Rug / Ground Props","Coffee / Mug Style","Coffee Mug Text","Butterfly / Accent Props","Sign / Text Board","Progress Bar Style","Bottom Signature / Footer Style","Desert Florals","Cactus Style","Sky / Lighting","Bedroom Scene Type","Architecture Style","Furniture Style","Lighting Mood","Bedroom Color Palette","Color Mood","Mirror / Vanity Details","Memory / Personal Photo Props","Flower Type","Window / Glow Details","Tea / Book Props","Candle Setup","Butterfly Details","Badge / Sticker Elements","Robe / Loungewear Style","Quote Layout Style","Tabletop Prop Details","Gratitude Prop Focus","Hand / Interaction Pose","Text Placement","Variation Style","Gratitude Mood","Remember Section","Acronym Line Style","Self-Care Details","Video Script Style","Suno Music Prompt Style","Caption Style","Sales Copy Angle","Product Listing Language","Open Book Style / Shape","Book Border / Glitter Frame","Book Page Color / Texture","Sunrise / Sky Background","Doves / Birds","Rose / Flower Type","Gown Color / Finish","Gown Shape / Silhouette","Pen Prop Style","Pen Color / Finish","Spiritual Symbol Details","Transformation Glow Effects","Book Page Writing Details","Foreground Path / Ground","Hair Color / Style","Jewelry / Accessories","Shoes / Heels","Character Pose / Placement","Script Font Style","Main Text Color","Script Text Color","Book Border Color","Flower Color","Gown Primary Color","Book Page Color","Gown Secondary Color","Typography Color","Sky Glow Color","Pen Accent Color","Dove / Symbol Glow Color","Quote Body Text Style","Top Small Text Style","Bottom Signature Style","Text Placement / Layout","Typography Effects","Text Size Control","Character Emotion / Energy","Scene Depth / Layers","Book Page Style","Book Cover Style","Typography Placement","Light Glow Colors","Symbol Details","Book Environment","Tabletop Scene Control","Bible / Book Control","Cozy Fabric / Blanket Control","Mug Scripture Control","Soft Icon Row Control","Soft Paper Panel Control"];
+  const keys=["Aspect Ratio","Text Type","Faith Tone","Poster Style Mode","Day of the Week Theme","Day Theme Display Rule","Text Sync Mode","Top Header Text","Headline Word","Headline Style","Acronym Letters","Jealousy Poster Theme","Jealousy Message Style","Character Type / Main Subject","Main Warning Message","Blessing / Peace Message","Luxury Car / SUV Type","Car Pose","Mansion / Driveway Background","Designer-Inspired Colorblock Outfit","Boot + Handbag Match","Coffee Cup / Tumbler Text","Flower + Rose Colors","Dove / Butterfly / Heart Details","Pink Bow / Car Decor","Quote Card Style","Custom Signature / Footer","Vehicle Type","Vehicle Pose / Placement","Vehicle Finish / Color","Vehicle Decor","Scene Background","Character Action","Extra Props","Main Headline Color","Headline Glow Color","Script Word Color","Body Text Color","Highlight Word Color 1","Highlight Word Color 2","Quote Card Background","Quote Card Border","Footer / Signature Color","Acronym Message Builder","Typography Layout","Background","Bridge Style","Art Finish","Color Palette","Primary Color","Secondary Color","Accent Color","Ethnicity","Skin Tone","Body Type","Hair","Hair Finish","Facial Expression","Makeup","Face / Beauty Details","Hat Style","Outfit","Outfit / Jacket Style","Top Style","Bottom Style","Jeans Style","Shirt Graphic","Shoes / Boots","Handbag / Accessories","Accessories","Weather / Season","City Mood / Weather","Outfit Color + Pattern","Dog / Beautiful Leash","Character Pose","Pose + Crop Lock","Decor","Background Details","Butterfly Details","Accent Effects","Runway Details","Typography Color Finish","Remember Style","Signature Style","Quote Text / Wording","Flower Type","Flower Style","Flower Placement","Butterfly Style","Butterfly Amount","Sparkle / Glow Effects","Typography Style","Character Framing","Jewelry / Accessories","Background Style","Decor Details","Poster Finish","Animal Main","Animal Sidekick","Animal Accessories","Animal Placement","Animal Expression","Animal Quantity","Animal Action / Pose","Animal Safety / Text Blocking Rule","Desert Props","Campfire Details","Rug / Ground Props","Coffee / Mug Style","Coffee Mug Text","Butterfly / Accent Props","Sign / Text Board","Progress Bar Style","Bottom Signature / Footer Style","Desert Florals","Cactus Style","Sky / Lighting","Bedroom Scene Type","Architecture Style","Furniture Style","Lighting Mood","Bedroom Color Palette","Color Mood","Mirror / Vanity Details","Memory / Personal Photo Props","Flower Type","Window / Glow Details","Tea / Book Props","Candle Setup","Butterfly Details","Badge / Sticker Elements","Robe / Loungewear Style","Quote Layout Style","Tabletop Prop Details","Gratitude Prop Focus","Hand / Interaction Pose","Text Placement","Variation Style","Gratitude Mood","Remember Section","Acronym Line Style","Self-Care Details","Open Book Style / Shape","Book Border / Glitter Frame","Book Page Color / Texture","Sunrise / Sky Background","Doves / Birds","Rose / Flower Type","Gown Color / Finish","Gown Shape / Silhouette","Pen Prop Style","Pen Color / Finish","Spiritual Symbol Details","Transformation Glow Effects","Book Page Writing Details","Foreground Path / Ground","Hair Color / Style","Jewelry / Accessories","Shoes / Heels","Character Pose / Placement","Script Font Style","Main Text Color","Script Text Color","Book Border Color","Flower Color","Gown Primary Color","Book Page Color","Gown Secondary Color","Typography Color","Sky Glow Color","Pen Accent Color","Dove / Symbol Glow Color","Quote Body Text Style","Top Small Text Style","Bottom Signature Style","Text Placement / Layout","Typography Effects","Text Size Control","Character Emotion / Energy","Scene Depth / Layers","Book Page Style","Book Cover Style","Typography Placement","Light Glow Colors","Symbol Details","Book Environment","Tabletop Scene Control","Bible / Book Control","Cozy Fabric / Blanket Control","Mug Scripture Control","Soft Icon Row Control","Soft Paper Panel Control"];
   const d={};
   keys.forEach(k=>d[k]=val(styleId,k));
   const sunriseKeys=["Art Style Mode","Layout Mode","Greeting + Day Text","Background Scene","Faith Props","Devotional Message Blocks","Character Control","Outfit / Robe Style","Hair Style","Icon / Badge Controls","Brush Stroke / Paint Effects","Text Density + Readable Text Lock","Dark Luxury Mode","Prayer Pose Control","Gold Icon Column","Prayer Desk Props","Luxury Footer Badge","Dark Typography Styling","Split Black Panel Layout","Storm / Breakthrough Scene","Gold Circle Icon Set","Checklist Message Control","Big Quote Overlay Control","Gold Sparkle + Divider Control","Tabletop Scene Control","Bible / Book Control","Cozy Fabric / Blanket Control","Mug Scripture Control","Soft Icon Row Control","Soft Paper Panel Control"];
@@ -1456,11 +1462,6 @@ If Custom Top Header has text, use it as the visible top label instead of the dr
 - Cactus style: ${d["Cactus Style"] || "None"}.
 - Sky / lighting: ${d["Sky / Lighting"] || "None"}.
 - Poster finish: ${d["Poster Finish"] || "None"}.
-- Video script style: ${d["Video Script Style"] || "None"}.
-- Suno music prompt style: ${d["Suno Music Prompt Style"] || "None"}.
-- Caption style: ${d["Caption Style"] || "None"}.
-- Sales copy angle: ${d["Sales Copy Angle"] || "None"}.
-- Product listing language: ${d["Product Listing Language"] || "None"}.
 
 WESTERN DESERT FUN EXECUTION LOCKS:
 LAYOUT STYLE RULE: If Layout Style is selected, it must control overall composition, text placement, character placement, animal placement, poster density, and how the scene is framed.
@@ -1878,7 +1879,7 @@ ${d["Extra Notes"] || "None"}
 
 QUALITY LOCK:
 ${qualityLock}`;
-  prompt = cleanGeneratedPrompt(prompt);
+  prompt = compactMainPromptOutput(styleId);
   document.getElementById(styleId+"_mainOutput").textContent=prompt;
   generateVideoScript(styleId);
   quality(styleId,prompt);
@@ -1979,6 +1980,182 @@ function compactSelectedLine(key, value){
   if(!value || value === "None") return "";
   return key + ": " + value + ".";
 }
+
+
+function shortCleanValue(value){
+  const v = String(value || "").trim();
+  if(!v || /^(None|undefined|null|No Character|No character outfit needed|No character hair needed)$/i.test(v)) return "";
+  return v;
+}
+function shortTrimSentence(text, maxLen=185){
+  let t = String(text || "").replace(/\s+/g," ").trim();
+  if(t.length <= maxLen) return t;
+  t = t.slice(0, maxLen).replace(/\s+\S*$/, "").trim();
+  return t + "…";
+}
+function shortJoinValues(values){
+  const seen = new Set();
+  return values.map(shortCleanValue).filter(Boolean).filter(v => {
+    const k = v.toLowerCase().replace(/\s+/g," ");
+    if(seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  }).join(", ");
+}
+function compactMainPromptOutput(styleId){
+  const s = getStyle(styleId), d = data(styleId);
+  const headline = shortCleanValue(d["Custom Headline Word"]) || shortCleanValue(d["Headline Word"]) || shortCleanValue(s.wordDefault) || "inspirational word";
+  const aspect = shortCleanValue(d["Aspect Ratio"]);
+  const topText = shortCleanValue(d["Custom Top Header"]) || shortCleanValue(d["Top Header Text"]) || shortCleanValue(d["Greeting + Day Text"]);
+  const acronym = shortCleanValue(d["Custom Acronym Lines"]) || shortCleanValue(d["Acronym Letters"]);
+  const remember = shortCleanValue(d["Custom Bottom Reminder"]) || shortCleanValue(d["Remember Section"]) || shortCleanValue(d["Remember Section Text"]);
+  const footer = shortCleanValue(d["Custom Footer / Signature"]) || shortCleanValue(d["Bottom Signature / Footer Name"]);
+
+  const styleBits = shortJoinValues([
+    d["Art Style Mode"], d["Art Finish"], d["Poster Finish"], d["Color Palette"], d["Primary Color"], d["Secondary Color"], d["Accent Color"]
+  ]);
+  const subjectBits = shortJoinValues([
+    d["Gender"], d["Character Control"], d["Character Type / Main Subject"], d["Ethnicity"], d["Skin Tone"], d["Body Type"],
+    d["Hair"], d["Hair Style"], d["Hair Finish"], d["Facial Expression"], d["Face / Beauty Details"], d["Character Pose"], d["Character Pose / Placement"], d["Pose + Crop Lock"]
+  ]);
+  const fashionBits = shortJoinValues([
+    d["Outfit"], d["Outfit / Jacket Style"], d["Outfit / Robe Style"], d["Robe / Loungewear Style"], d["Top Style"], d["Bottom Style"],
+    d["Jeans Style"], d["Shirt Graphic"], d["Shoes / Boots"], d["Shoes / Heels"], d["Handbag / Accessories"], d["Jewelry / Accessories"], d["Accessories"], d["Hat Style"]
+  ]);
+  const sceneBits = shortJoinValues([
+    d["Background"], d["Background Scene"], d["Scene Background"], d["Bedroom Scene Type"], d["Book Environment"], d["Bridge Style"],
+    d["Vehicle Type"], d["Vehicle Finish / Color"], d["Vehicle Pose / Placement"], d["Lighting Mood"], d["Sky / Lighting"], d["Weather / Season"], d["City Mood / Weather"]
+  ]);
+  const detailBits = shortJoinValues([
+    d["Decor"], d["Background Details"], d["Decor Details"], d["Accent Effects"], d["Runway Details"], d["Flower Type"], d["Flower Style"],
+    d["Butterfly Style"], d["Butterfly Amount"], d["Sparkle / Glow Effects"], d["Faith Props"], d["Devotional Message Blocks"], d["Icon / Badge Controls"], d["Brush Stroke / Paint Effects"], d["Tea / Book Props"], d["Candle Setup"], d["Gratitude Prop Focus"]
+  ]);
+  const typoBits = shortJoinValues([
+    d["Typography Layout"], d["Typography Placement"], d["Text Placement"], d["Text Placement / Layout"], d["Typography Color Finish"], d["Headline Style"], d["Quote Layout Style"], d["Signature Style"], d["Bottom Signature Style"]
+  ]);
+  const customNotes = shortCleanValue(d["Extra Notes"]);
+
+  const lines = [];
+  lines.push(`Create a ${aspect ? aspect + " " : ""}premium AI image.`);
+  lines.push(`Generator: ${s.name}.`);
+  lines.push(`Style: ${shortTrimSentence(s.art, 170)}${styleBits ? " " + styleBits + "." : ""}`);
+  if(sceneBits) lines.push(`Scene: ${sceneBits}.`);
+  if(subjectBits) lines.push(`Character: ${subjectBits}.`);
+  if(fashionBits) lines.push(`Styling: ${fashionBits}.`);
+  if(detailBits) lines.push(`Details: ${detailBits}.`);
+  const textParts = [];
+  if(topText) textParts.push(`top text “${topText}”`);
+  textParts.push(`headline “${headline}”`);
+  if(acronym) textParts.push(`acronym/text ${acronym}`);
+  if(remember) textParts.push(`remember/bottom text “${remember}”`);
+  if(footer) textParts.push(`footer/signature “${footer}”`);
+  lines.push(`Text: ${textParts.join("; ")}.`);
+  if(typoBits) lines.push(`Typography: ${typoBits}; readable, clean, high contrast.`);
+  if(customNotes) lines.push(`Extra notes: ${shortTrimSentence(customNotes, 260)}`);
+
+  const negatives = ["No random tiny text", "no logos/watermarks", "no clutter", "no awkward cropping"];
+  if(styleId === "goldqueen" || /crown|tiara|royal head/i.test(lines.join(" "))) negatives.unshift("no crowns, tiaras, or royal headwear");
+  if(shortCleanValue(d["Gender"]) === "Male") negatives.push("strict masculine styling; no feminine accessories");
+  lines.push(`Quality: polished luxury poster, crisp edges, clean composition. Negative: ${[...new Set(negatives)].join(", ")}.`);
+
+  let out = plainTextOnly(lines.filter(Boolean).join("\n"));
+  out = out.replace(/\bNone\b[.,;]?/gi, "").replace(/[ \t]{2,}/g," ").replace(/,\s*,/g, ",").replace(/:\s*\./g, ":").trim();
+  const max = 2200;
+  if(out.length > max){
+    out = out.slice(0, max).replace(/\s+\S*$/, "").trim() + "\nQuality: readable text, clean composition, selected controls only.";
+  }
+  return out;
+}
+
+function compactPromptOutput(text){
+  let t = String(text || "");
+
+  // Compact Mode: keep the art direction strong, but remove backend-style coaching bloat.
+  const compactReplacements = [
+    [/premium glossy digital illustration \/ cartoon realism, Pinterest-ready, and faithful to the selected mini-generator/gi, "premium glossy cartoon-realism, Pinterest-ready"],
+    [/premium glossy digital illustration \/ cartoon realism/gi, "glossy cartoon-realism"],
+    [/premium digital illustration/gi, "digital illustration"],
+    [/finished premium image poster/gi, "premium poster"],
+    [/Keep all words crisp, high-contrast, and readable/gi, "Keep text readable"],
+    [/Keep text crisp, readable, bold, polished, and integrated into the poster/gi, "Keep text bold, readable, and polished"],
+    [/Do not invent random extra tiny text/gi, "No random tiny text"],
+    [/Selected controls must visibly influence the final image/gi, "Selected controls guide the final image"],
+    [/Selected options must visibly influence the final image/gi, "Selected options guide the final image"],
+    [/Use this as the starting vibe only, not a hard lock/gi, "Use this as flexible style direction"],
+    [/not a fixed recipe/gi, "not a fixed recipe"],
+    [/Keep the text readable, clean, premium, and editorial/gi, "Keep text readable and editorial"],
+    [/without covering the readable text/gi, "without covering text"],
+    [/without touching the face\/body/gi, "away from face/body"],
+    [/Do not include any outside brand names, creator names, watermarks, signatures, or personal names from reference images\.?/gi, "No outside names, logos, or watermarks."],
+    [/Do not include any outside creator name from the reference image anywhere in the image, typography, butterfly detail, signature area, background, or prompt output\.?/gi, ""],
+    [/Use only the user-selected custom signature or leave the signature area blank\.?/gi, "Use only typed signature text."],
+    [/Do not create messy tiny wording\.?/gi, "No messy tiny wording."],
+    [/Do not repeat the same line for duplicate letters\.?/gi, "Vary duplicate-letter lines."],
+    [/Do not force/g, "Do not force"],
+    [/Do not add/g, "Do not add"],
+    [/Do not use/g, "Do not use"]
+  ];
+  compactReplacements.forEach(([re, val]) => t = t.replace(re, val));
+
+  // Remove verbose backend guide labels that make prompts look like instruction manuals.
+  t = t.replace(/^.*(?:EXECUTION GUIDE|COLOR CONTROL GUIDE|READABILITY GUIDE|RANDOMIZER BALANCE RULE|SMART COLOR LOGIC|STYLE FREEDOM RULE):\s*$/gim, "");
+  t = t.replace(/^\s*(?:MODE BEHAVIOR|VISUAL HIERARCHY RULE|CLOTHING DETAIL RULE|ACCENT EFFECTS RULE|COMPOSITION RULE|STYLE RENDERING RULE):\s*$/gim, "");
+
+  // Compact large quality sections into one reusable quality line.
+  t = t.replace(/\nQUALITY LOCK:\s*\n[\s\S]*$/i,
+    "\nQUALITY: readable typography, clean composition, selected controls only, no clutter, no cropped body parts, no random text, no logos/watermarks.");
+  t = t.replace(/\nQUALITY GUIDELINES:\s*\n[\s\S]*$/i,
+    "\nQUALITY: readable typography, clean composition, selected controls only, no clutter, no cropped body parts, no random text, no logos/watermarks.");
+
+  // Merge repeated negative instructions into a shorter final block.
+  const negatives = [];
+  const negativePatterns = [
+    [/no\s+crowns?|tiaras?|royal headwear|royal headpieces?/i, "No crowns, tiaras, or royal headwear."],
+    [/no\s+logos?|watermarks?|brand names?/i, "No logos, brand names, or watermarks."],
+    [/no\s+random (?:tiny )?text|Do not invent random extra tiny text/i, "No random tiny text."],
+    [/no\s+cropped|Do not crop/i, "No awkward cropping."],
+    [/no\s+clutter|messy/i, "No clutter or messy layout."]
+  ];
+  negativePatterns.forEach(([re, line]) => { if(re.test(t) && !negatives.includes(line)) negatives.push(line); });
+
+  // Remove duplicate negative lines after capturing them.
+  t = t.replace(/^.*(?:No crowns|no crowns|tiaras|royal headwear|royal headpieces).*$/gim, "");
+  t = t.replace(/^.*(?:No logos|no logos|watermarks|brand names).*$/gim, "");
+  t = t.replace(/^.*(?:No random tiny text|random extra tiny text).*$/gim, "");
+
+  // Dedupe repeated sentences/lines while preserving order.
+  const seenLines = new Set();
+  t = t.split("\n").map(line => line.trim()).filter(line => {
+    if(!line) return true;
+    const key = line.toLowerCase().replace(/\s+/g," ");
+    if(seenLines.has(key)) return false;
+    seenLines.add(key);
+    return true;
+  }).join("\n");
+
+  t = t.replace(/\n{3,}/g, "\n\n");
+  t = t.replace(/[ \t]{2,}/g, " ");
+
+  // Dedupe comma phrases inside dense visual lines.
+  t = t.split("\n").map(line => {
+    if(line.length < 180 || !line.includes(",")) return line;
+    const parts = line.split(",").map(x => x.trim()).filter(Boolean);
+    const seen = new Set();
+    const compact = [];
+    for(const part of parts){
+      const key = part.toLowerCase().replace(/^(and|with)\s+/, "").replace(/\s+/g, " ");
+      if(!seen.has(key)) { seen.add(key); compact.push(part); }
+    }
+    return compact.join(", ");
+  }).join("\n");
+
+  if(negatives.length){
+    t += "\n\nNEGATIVE PROMPT: " + negatives.join(" ");
+  }
+
+  return t.trim();
+}
+
 function cleanGeneratedPrompt(text){
   let t = String(text || "");
 
@@ -2780,12 +2957,20 @@ function makeVariations(styleId){
   if(details) details.open=true;
   box.scrollIntoView({behavior:"smooth",block:"center"});
 }
+function musicChoice(styleId, chipSuffix, customSuffix, fallback){
+  const picked = selectedChips(styleId + chipSuffix);
+  const customEl = document.getElementById(styleId + customSuffix);
+  const custom = customEl ? customEl.value.trim() : "";
+  const combined = custom ? picked.concat(custom) : picked;
+  return combined.length ? combined.join(", ") : fallback;
+}
+
 function generateMusic(styleId){
   const s=getStyle(styleId), d=data(styleId);
   const m=freshMusicAngle(styleId);
-  const genres=selectedChips(styleId+"_genres").join(", ") || "R&B, Pop";
-  const vibes=selectedChips(styleId+"_vibes").join(", ") || "confident soulful glam";
-  const vocals=selectedChips(styleId+"_vocals").join(", ") || "Vocal";
+  const genres=musicChoice(styleId,"_genres","_customGenre","R&B, Pop");
+  const vibes=musicChoice(styleId,"_vibes","_customStyleInfluence","confident soulful glam");
+  const vocals=musicChoice(styleId,"_vocals","_customVocalType","Vocal");
   const westernMusic = styleId==="western" ? (d["Suno Music Prompt Style"] || "None") : "None";
   const musicDirection = westernMusic!=="None" ? ` Use this chosen Suno style: ${westernMusic}.` : "";
   document.getElementById(styleId+"_jingle").textContent=`Fresh Suno variation ${m.n}. ${vocals} jingle under 15 seconds for ${s.name}. Genre blend: ${genres}. Mood: ${vibes}. Groove: ${m.groove}. Hook style: ${m.hook}.${musicDirection} Hook lyric: "${d["Headline Word"]}, I keep moving, I keep glowing, I keep choosing me."`;
